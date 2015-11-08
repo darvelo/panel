@@ -1,0 +1,34 @@
+# typical ignores
+node_modules
+bower_components
+__pycache__
+dist
+built
+public
+.tmp
+.sass-cache
+coverage
+*.secret.json
+
+# vim-related
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+.vimrc
+*~
+
+# TernJS
+.tern-project
+
+# Sqlite3 DB file
+*.db
+*.db-journal
+*.sqlite3
+
+# this project
+static
+admin.py
+.tox
+MANIFEST
