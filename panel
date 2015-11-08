@@ -7,7 +7,7 @@ from PyQt5 import QtWidgets
 from PyQt5 import QtCore
 
 __builtins__.BOTTOM_BORDER = 0
-__builtins__.HEIGHT = 20 + BOTTOM_BORDER
+__builtins__.HEIGHT = 24 + BOTTOM_BORDER
 
 from widgets.flow_layout  import FlowLayout
 from widgets.workspaces   import WorkspacesProvider
@@ -15,6 +15,7 @@ from widgets.window_title import WindowTitleProvider
 from widgets.time         import TimeProvider
 from widgets.volume       import VolumeProvider
 from widgets.cpu          import CpuProvider
+from widgets.memory       import MemoryProvider
 from widgets.net          import NetworkUsageProvider
 from widgets.battery      import BatteryProvider
 from widgets.mpd          import MpdProvider
@@ -91,7 +92,10 @@ class MainWindow(QtWidgets.QMainWindow):
             QtWidgets.QHBoxLayout(monitor_widget, spacing=0, margin=0)
             subwidgets = []
             for class_name in ['left', 'right']:
-                subwidget = QtWidgets.QWidget(size=QtCore.QSize(int(monitor.width) / 2.0, 0))
+                subwidget_width_multiplier = 0.4 if class_name == 'left' else 0.6
+                subwidget_width = int(monitor.width) * subwidget_width_multiplier
+                subwidget = QtWidgets.QWidget(size=QtCore.QSize(subwidget_width, 0))
+                subwidget.setMaximumWidth(subwidget_width)
                 subwidget.setProperty('class', class_name)
                 FlowLayout(subwidget, spacing=0, margin=0, rtl=class_name == 'right')
                 monitor_widget.layout().addWidget(subwidget)
@@ -126,18 +130,19 @@ def main():
         WindowTitleProvider(main_window),
         MpdProvider(main_window),
         NetworkUsageProvider(main_window),
-        BatteryProvider(main_window),
         CpuProvider(main_window),
+        MemoryProvider(main_window),
         VolumeProvider(main_window),
+        BatteryProvider(main_window),
         TimeProvider(main_window)
     ]
 
     def worker(provider, trigger):
         while True:
             provider.refresh()
+            trigger.emit(provider.render)
             if provider.delay > 0:
                 time.sleep(provider.delay)
-            trigger.emit(provider.render)
 
     for provider in providers:
         t = threading.Thread(
