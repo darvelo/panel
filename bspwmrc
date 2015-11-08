@@ -1,0 +1,82 @@
+#!/bin/sh
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do
+    DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+    SOURCE="$(readlink "$SOURCE")"
+    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE"
+ done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+desktop_config() {
+    bspc config $1 $2
+    for M in $(bspc query -M); do
+        bspc config -m $M $1 $2
+    done
+}
+run_if_needed() {
+    if ! xdotool search --name "$1" &>/dev/null; then
+        nohup "$2" </dev/null &>/dev/null &
+    fi
+}
+
+if [ "$(hostname)" = tornado ]; then
+    run_if_needed pidgin pidgin
+    run_if_needed firefox firefox
+    run_if_needed trackma-qt trackma-qt
+    run_if_needed qbittorrent qbittorrent
+elif [ "$(hostname)" = chibi || "$(hostname)" = bus ]; then
+    run_if_needed trackma-qt trackma-qt
+fi
+
+desktop_config focused_border_color "#20aaba"
+desktop_config urgent_border_color "#de3333"
+desktop_config active_border_color "#cccccc"
+desktop_config normal_border_color "#cccccc"
+
+desktop_config top_padding 19
+desktop_config border_width 3
+if [ "$(hostname)" = tornado ]; then
+    desktop_config window_gap 29
+else
+    desktop_config window_gap 12
+fi
+desktop_config split_ratio             0.50
+desktop_config borderless_monocle      true
+desktop_config gapless_monocle         true
+desktop_config focus_by_distance       true
+desktop_config focus_follows_pointer   true
+
+if [ "$(hostname)" = tornado ]; then
+    bspc monitor HDMI-0 -d 1 2
+    bspc monitor DVI-I-1 -d 3 4 5 6 7 8 9 10 IM
+else
+    bspc monitor -d 1 2 3 4 5 6 7 8 9 10 IM
+fi
+
+bspc rule -a Buddy desktop=IM
+bspc rule -a Pidgin desktop=IM floating=on
+bspc rule -a Trackma-qt desktop=10 floating=on
+bspc rule -a music_player desktop=10 floating=on
+bspc rule -a qbittorrent desktop=9
+bspc rule -a Steam desktop=8
+bspc config external_rules_command "$DIR/rules"
+
+feh --bg-fill "$HOME/.wallpaper1" "$HOME/.wallpaper2" &
+
+pkill -f sxhkd
+sxhkd &
+
+# fix Java GUI rendering - found in baskerville's dotfiles
+IRONIC_WM_NAME="LG3D"
+NET_WIN=$(xprop -root _NET_SUPPORTING_WM_CHECK | awk -F "# " '{print $2}')
+if [[ "$NET_WIN" == 0x* ]]; then
+    xprop -id "$NET_WIN" -remove _NET_WM_NAME
+    xprop -id "$NET_WIN" -f _NET_WM_NAME 8s -set _NET_WM_NAME "$IRONIC_WM_NAME"
+else
+    xprop -root -remove _NET_WM_NAME
+    xprop -root -f _NET_WM_NAME 8s -set _NET_WM_NAME "$IRONIC_WM_NAME"
+fi
+
+pkill -f bspwm/panel
+nohup $HOME/.config/bspwm/panel </dev/null &>/dev/null &
