@@ -92,6 +92,21 @@ class CygwinPackageInstaller(object):
     def install(self, package):
         return run_verbose(['apt-cyg', 'install', package])
 
+class AptGetPackageInstaller(object):
+    name = 'apt-get'
+
+    def supported(self):
+        return FileInstaller.has_executable('apt-get')
+
+    def is_installed(self, package):
+        return run_silent(['dpkg-query', '-W', '-f=\'${db:Status-Status}\'', '%s' % package])[0] == True
+
+    def is_available(self, package):
+        return len(run_silent(['apt-cache', 'search', '^%s$' % package])[1]) > 0
+
+    def install(self, package):
+        return run_verbose(['sudo', 'apt-get', 'install', package])
+
 class PacmanPackageInstaller(object):
     name = 'pacman'
 
@@ -162,6 +177,7 @@ class PackageInstaller(object):
         CygwinPackageInstaller(),
         PacmanPackageInstaller(),
         YaourtPackageInstaller(),
+        AptGetPackageInstaller(),
         PipPackageInstaller(),
     ]
 
