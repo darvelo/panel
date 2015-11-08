@@ -60,13 +60,13 @@ class VolumeProvider(object):
             w.wheelEvent = self.change_volume
 
     def change_volume(self, event):
-        subprocess.call(['amixer', '-q', 'set', 'Master',
+        subprocess.call(['amixer', '-q', '-c', '1', 'set', 'Master',
             '1dB%s' % ['-', '+'][event.angleDelta().y() > 0], 'unmute'])
         self.refresh()
         self.render()
 
     def toggle_mute(self, event):
-        subprocess.call(['amixer', '-q', 'set', 'Master', 'toggle'])
+        subprocess.call(['amixer', '-q', '-c', '1', 'set', 'Master', 'toggle'])
         self.refresh()
         self.render()
 

@@ -25,7 +25,8 @@ class MpdProvider(object):
         self.random_label.setText('\U0001F500')
 
         for w in [self.status_label, self.song_label, self.random_label]:
-            main_window[len(main_window) - 1].right_widget.layout().addWidget(w)
+            # main_window[len(main_window) - 1].right_widget.layout().addWidget(w)
+            main_window[0].right_widget.layout().addWidget(w)
 
         self.status_label.mouseReleaseEvent = self.play_pause_clicked
         self.song_label.mouseReleaseEvent = self.play_pause_clicked
@@ -86,7 +87,7 @@ class MpdProvider(object):
                     text = self.current_song['artist'] + ' - '
                 text += self.current_song['title']
             if 'elapsed' in self.mpd_status and 'time' in self.current_song:
-                text += ' %s / %s' % (
+                text += ' %s/%s' % (
                     self.format_seconds(self.mpd_status['elapsed']),
                     self.format_seconds(self.current_song['time']))
             else:

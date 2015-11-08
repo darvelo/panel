@@ -9,7 +9,7 @@ class TimeProvider(object):
         self.clock_label = QtWidgets.QLabel()
         for w in [self.date_label, self.clock_label]:
             main_window[0].right_widget.layout().addWidget(w)
-        self.date_label.setStyleSheet('QWidget { margin-left: 12px; margin-right: 0 }')
+        self.date_label.setStyleSheet('QWidget { margin-left: 3px; margin-right: 0 }')
         self.clock_label.setStyleSheet('QWidget { margin-left: 0; padding: 0 }')
 
     def refresh(self):
@@ -17,4 +17,4 @@ class TimeProvider(object):
 
     def render(self):
         self.clock_label.setText(datetime.strftime(self.date, '%H:%M:%S'))
-        self.date_label.setText(datetime.strftime(self.date, '%a, %d %b %Y'))
+        self.date_label.setText(datetime.strftime(self.date, '%a, %b %d'))

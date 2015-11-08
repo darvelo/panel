@@ -5,7 +5,7 @@ from PyQt5 import QtCore
 from .chart import Chart
 
 class CpuProvider(object):
-    delay = 0
+    delay = 3
 
     def __init__(self, main_window):
         self.label = QtWidgets.QLabel()

@@ -31,7 +31,7 @@ class NetworkUsageProvider(object):
             self.old_tx_bytes = int(read_file(self.tx_path))
             self.net_in_label = QtWidgets.QLabel()
             self.net_out_label = QtWidgets.QLabel()
-            self.chart = Chart(QtCore.QSize(80, main_window.height()))
+            self.chart = Chart(QtCore.QSize(40, main_window.height()))
             for w in [self.net_in_label, self.net_out_label, self.chart]:
                 main_window[0].right_widget.layout().addWidget(w)
             self.chart.repaint()
@@ -47,8 +47,10 @@ class NetworkUsageProvider(object):
 
     def render(self):
         if self.network_enabled:
-            self.net_in_label.setText('\U0001f847 %.0f KB/s' % (self.net_in / 1024.0))
-            self.net_out_label.setText('\U0001f845 %.0f KB/s' % (self.net_out / 1024.0))
+            # self.net_in_label.setText('\U0001f847 %.0f KB/s' % (self.net_in / 1024.0))
+            # self.net_out_label.setText('\U0001f845 %.0f KB/s' % (self.net_out / 1024.0))
+            self.net_in_label.setText('\U0001f847 %.0f' % (self.net_in / 1024.0))
+            self.net_out_label.setText('\U0001f845 %.0f' % (self.net_out / 1024.0))
             self.chart.addPoint('#00a000', self.net_in)
             self.chart.addPoint('#ff0000', self.net_out)
             self.chart.repaint()
