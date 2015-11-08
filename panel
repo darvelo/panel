@@ -15,7 +15,7 @@ from widgets.window_title import WindowTitleProvider
 from widgets.time         import TimeProvider
 from widgets.volume       import VolumeProvider
 from widgets.cpu          import CpuProvider
-from widgets.memory       import MemoryProvider
+from widgets.mem          import MemoryProvider
 from widgets.net          import NetworkUsageProvider
 from widgets.battery      import BatteryProvider
 from widgets.mpd          import MpdProvider
