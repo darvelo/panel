@@ -142,7 +142,7 @@ class PipPackageInstaller(object):
     cache_dir = tempfile.gettempdir()
 
     def __init__(self):
-        if 'cygwin' in sys.platform:
+        if 'cygwin' in sys.platform or 'Debian' in subprocess.check_output(['lsb_release', '-d']).decode('utf8'):
             self.executable = 'pip3'
             self.use_sudo = False
         else:
@@ -161,15 +161,22 @@ class PipPackageInstaller(object):
             re.MULTILINE) is not None
 
     def is_available(self, package):
+        command = [self.executable, 'search', package]
+        if self.executable == 'pip':
+            command += ['--cache-dir', self.cache_dir]
         return re.search(
             '^' + re.escape(package) + '($|\s)',
-            run_silent([self.executable, 'search', package, '--cache-dir', self.cache_dir])[1],
+            run_silent(command)[1],
             re.MULTILINE) is not None
 
     def install(self, package):
-        command = [self.executable, 'install', '--cache-dir', self.cache_dir, package]
+        command = [self.executable, 'install', package]
+        if self.executable == 'pip':
+            command += ['--cache-dir', self.cache_dir]
         if self.use_sudo:
             command = ['sudo'] + command
+        else:
+            command += ['--user']
         return run_verbose(command)
 
 class PackageInstaller(object):
