@@ -28,7 +28,3 @@ Session.vim
 *.sqlite3
 
 # this project
-static
-admin.py
-.tox
-MANIFEST
